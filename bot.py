@@ -36,7 +36,7 @@ KİMLİK VE ÜSLUP:
 
 AFORİZMATİK CAROUSEL KURALLARI:
 Eğer içerik bir Carousel (kaydırmalı/çoklu görsel) ise:
-1. Metni asla tek parça yazma. Mutlaka "Kart 1: ...", "Kart 2: ...", "Kart 3: ..." şeklinde başlıklar koyarak böl.
+1. Metni asla tek parça yazma. KESİNLİKLE 'Kart 1:', 'Kart 2:', '1. Görsel:' gibi numaralandırmalar veya başlıklar YAZMA. Parçaları birbirinden ayırmak için SADECE aralarına . işareti koy.
 2. Her kartın metni kısa, vurucu, sarsıcı ve aforizmatik olmalı.
 3. Gereksiz kelimelerden kaçın. Az kelimeyle çok şey anlat (Örn: "Sorun sert olman değil. Sorun eğilmemen.").
 4. Kısa cümleler, anlamlı duraksamalar ve derinlikli bir ton kullan.
@@ -184,7 +184,7 @@ def send_email(subject, body, image_paths):
 
 def main():
     print("Otonom Bot Yeni Mimari Başlatıldı...")
-    is_carousel = random.random() < 1.0
+    is_carousel = random.random() < 0.30
     content, topic = generate_content(is_carousel)
     
     if not content: return
