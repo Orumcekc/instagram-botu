@@ -27,10 +27,20 @@ RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
 client_ai = OpenAI(api_key=OPENAI_API_KEY)
 
 # Sistem Talimatı (Karakter ve Tarz)
-SYSTEM_INSTRUCTION = """Sen profesyonel bir sosyal medya uzmanısın. Tüm yanıtlarını mükemmel bir Türkçe ile, imla ve yazım kurallarına titizlikle uyarak vermelisin. İçeriklerin yaratıcı, ilgi çekici ve viral potansiyeli yüksek olmalı.
-ÖNEMLİ: İçerik üretirken sosyal medyadaki 'Mustafa Şen' (@mustafasenc) profilinin dilini, tarzını ve kurgu yapısını uygula.
-ÜSLUP: Ağabey dili, derinlikli analiz, teknofeodalizm eleştirisi, tarih şuuru, meydan okuyan tavır ("Artık yemiyoruz", "Hadi oradan").
-KİMLİK: Sosyal ve Dini Yorumcu, Değerlerin Savunucusu, Modern Çağ Eleştirmeni, Jeopolitik Analist, Tarih ve Hafıza Bekçisi.
+SYSTEM_INSTRUCTION = """Sen profesyonel bir sosyal medya uzmanısın ve 'Mustafa Şen' (@mustafasenc) kimliğiyle içerik üretiyorsun.
+
+KİMLİK VE ÜSLUP:
+- Kimlik: Sosyal ve Dini Yorumcu, Değerlerin Savunucusu, Modern Çağ Eleştirmeni, Jeopolitik Analist, Tarih ve Hafıza Bekçisi.
+- Üslup: 'Ağabey' dili, derinlikli analiz, teknofeodalizm eleştirisi, tarih şuuru, meydan okuyan tavır ("Artık yemiyoruz", "Hadi oradan").
+- Dil: Mükemmel Türkçe, imla ve yazım kurallarına titiz uyum.
+
+AFORİZMATİK CAROUSEL KURALLARI:
+Eğer içerik bir Carousel (kaydırmalı/çoklu görsel) ise:
+1. Metni asla tek parça yazma. Mutlaka "Kart 1: ...", "Kart 2: ...", "Kart 3: ..." şeklinde başlıklar koyarak böl.
+2. Her kartın metni kısa, vurucu, sarsıcı ve aforizmatik olmalı.
+3. Gereksiz kelimelerden kaçın. Az kelimeyle çok şey anlat (Örn: "Sorun sert olman değil. Sorun eğilmemen.").
+4. Kısa cümleler, anlamlı duraksamalar ve derinlikli bir ton kullan.
+
 KONULAR: Gelenek ve Gelecek, Anadolu İrfanı, Gençlik ve Kimlik, Şehir Estetiği, Dijital Kölelik, Medeniyet Tasavvuru."""
 
 def generate_content(is_carousel=False):
@@ -52,15 +62,16 @@ def generate_content(is_carousel=False):
         if is_carousel:
             prompt = (
                 f"Lütfen '{selected_topic}' konusu üzerine bir Instagram Carousel (3'lü kaydırmalı post) içeriği üret:\n"
-                f"1. Instagram açıklaması (caption): Derinlikli, 'Mustafa Şen' tarzında.\n"
-                f"2. 3 adet Görsel Metni (punchy_texts): Her görsel için birer adet, kısa ve sarsıcı cümle.\n"
-                f"Yanıtını sadece JSON formatında ver: {{\"caption\": \"...\", \"punchy_texts\": [\"...\", \"...\", \"...\"]}}"
+                f"1. Instagram açıklaması (caption): Derinlikli, 'Mustafa Şen' tarzında. Carousel içeriğini özetleyen, merak uyandıran ve sonunda bir soruyla etkileşim kuran meta-metin.\n"
+                f"2. 3 adet Görsel Metni (punchy_texts): Her kart için birer adet, Kart 1, Kart 2, Kart 3 şeklinde etiketlenmiş, kısa, sarsıcı ve aforizmatik cümleler.\n"
+                f"Örnek yapı: \"Kart 1: Namazını sakince kılarsın. Ama yüzler değişir.\"\n"
+                f"Yanıtını sadece JSON formatında ver: {{\"caption\": \"...\", \"punchy_texts\": [\"Kart 1: ...\", \"Kart 2: ...\", \"Kart 3: ...\"]}}"
             )
         else:
             prompt = (
                 f"Lütfen '{selected_topic}' konusu üzerine tek bir Instagram postu üret:\n"
                 f"1. Instagram açıklaması (caption): Derinlikli, 'Mustafa Şen' tarzında.\n"
-                f"2. Görsel Metni (punchy_text): Görselin ortasına yazılacak çok vuruşu bir cümle.\n"
+                f"2. Görsel Metni (punchy_text): Görselin ortasına yazılacak çok vuruşu, aforizmatik bir cümle.\n"
                 f"Yanıtını sadece JSON formatında ver: {{\"caption\": \"...\", \"punchy_text\": \"...\"}}"
             )
         
@@ -71,7 +82,7 @@ def generate_content(is_carousel=False):
                 {"role": "user", "content": prompt}
             ],
             response_format={ "type": "json_object" },
-            temperature=0.7
+            temperature=0.8
         )
         
         result = json.loads(response.choices[0].message.content)
