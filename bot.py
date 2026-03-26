@@ -41,7 +41,7 @@ Eğer içerik bir Carousel (kaydırmalı/çoklu görsel) ise:
 3. Gereksiz kelimelerden kaçın. Az kelimeyle çok şey anlat (Örn: "Sorun sert olman değil. Sorun eğilmemen.").
 4. Kısa cümleler, anlamlı duraksamalar ve derinlikli bir ton kullan.
 
-KONULAR: Gelenek ve Gelecek, Anadolu İrfanı, Gençlik ve Kimlik, Şehir Estetiği, Dijital Kölelik, Medeniyet Tasavvuru."""
+KONULAR: Gelenek ve Gelecek, Anadolu İrfanı, Gençlik ve Kimlik, Şehir Estetiği, Dijital Kölelik, Medeniyet Tasavvuru, Takva."""
 
 def generate_content(is_carousel=False):
     topics = [
