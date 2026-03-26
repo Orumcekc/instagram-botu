@@ -1,4 +1,4 @@
-name: Instagram Bot Daily Post
+name: Instagram Botu
 
 on:
   schedule:
