@@ -197,7 +197,7 @@ def send_email(subject, body, image_paths):
 
 def main():
     print("Otonom Bot Yeni Mimari Başlatıldı...")
-    is_carousel = random.random() < 0.30
+    is_carousel = True
     content, topic = generate_content(is_carousel)
     
     if not content: return
