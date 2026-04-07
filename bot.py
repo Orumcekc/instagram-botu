@@ -5,6 +5,7 @@ import random
 import json
 import requests
 import smtplib
+import re # Metin kesme işlemi için eklendi
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
@@ -19,9 +20,9 @@ load_dotenv(env_path)
 
 # API Anahtarları ve E-posta Bilgileri
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-SENDER_EMAIL = os.getenv("SENDER_EMAIL")
-SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
-RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
+SENDER_EMAIL = os.getenv("EMAIL_USER")
+SENDER_PASSWORD = os.getenv("EMAIL_PASS")
+RECEIVER_EMAIL = os.getenv("EMAIL_RECEIVER")
 
 # OpenAI İstemcisi
 client_ai = OpenAI(api_key=OPENAI_API_KEY)
@@ -111,21 +112,33 @@ def generate_image(prompt_text, filename):
 
 def add_text_to_image(image_path, text, output_path):
     try:
+        # --- ZORUNLU KESİCİ (Kart 1, Kart 2 vs. temizle) ---
+        text = re.sub(r"^(Kart\s*\d+:\s*|\d+\.\s*Görsel:\s*)", "", text, flags=re.IGNORECASE).strip()
+
         img = Image.open(image_path).convert("RGBA")
         width, height = img.size
         overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
         draw = ImageDraw.Draw(overlay)
         
-        font_paths = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "C:/Windows/Fonts/SegoeUI-Bold.ttf", "Arial"]
+        # --- GÜÇLENDİRİLMİŞ FONT YÜKLEYİCİ (Arial, 45 Punto) ---
+        font_paths = [
+            "C:\\Windows\\Fonts\\arial.ttf", 
+            "C:\\Windows\\Fonts\\tahoma.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 
+            "arial.ttf"
+        ]
         font = None
         for p in font_paths:
             try:
-                font = ImageFont.truetype(p, 60)
+                font = ImageFont.truetype(p, 45) # Boyut 45 yapıldı
                 break
             except: continue
-        if not font: font = ImageFont.load_default()
+            
+        if not font: 
+            print("Uyarı: Gelişmiş font bulunamadı, varsayılan kullanılıyor!")
+            font = ImageFont.load_default()
 
-        # Metni sarma ve yazdırma (Basitleştirilmiş)
+        # Metni sarma ve yazdırma
         words = text.split()
         lines = []
         current_line = ""
