@@ -5,6 +5,7 @@ import random
 import json
 import requests
 import smtplib
+import schedule
 import re # Metin kesme işlemi için eklendi
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -196,7 +197,7 @@ def send_email(subject, body, image_paths):
         return False
 
 def main():
-    print("Otonom Bot Yeni Mimari Başlatıldı...")
+    print("Otonom Bot İçerik Üretimine Başladı...")
     is_carousel = random.random() < 0.30
     content, topic = generate_content(is_carousel)
     
@@ -227,8 +228,16 @@ def main():
         else:
             print("E-posta gönderilemedi.")
     
-    print("İşlem tamamlandı.")
-    sys.exit(0)
+    print("Günün işlemi tamamlandı. Bot yarın saat 15:00'a kadar uyku modunda...")
+    # sys.exit(0) YAZAN SATIRI SİLİYORUZ, ÇÜNKÜ BOTUN KAPANMASINI İSTEMİYORUZ!
 
 if __name__ == "__main__":
-    main()
+    print("🤖 Instagram Mail Botu Nöbete Başladı! Her gün 15:00'da çalışacak. Lütfen terminali kapatmayın.")
+    
+    # Her gün saat 15:00'da main fonksiyonunu çalıştır
+    schedule.every().day.at("15:00").do(main)
+    
+    # Sonsuz döngü: Bot arka planda saati kontrol eder
+    while True:
+        schedule.run_pending()
+        time.sleep(60) # Her 60 saniyede bir saati kontrol et
