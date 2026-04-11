@@ -1,11 +1,9 @@
 import os
 import sys
-import time
 import random
 import json
 import requests
 import smtplib
-import schedule
 import re # Metin kesme işlemi için eklendi
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -14,16 +12,17 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from PIL import Image, ImageDraw, ImageFont
 
-# .env dosyasını bulunduğu dizinden güvenli şekilde yükle
+# .env dosyasını bulunduğu dizinden güvenli şekilde yükle (Lokal ortam için)
 base_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(base_dir, '.env')
 load_dotenv(env_path)
 
-# API Anahtarları ve E-posta Bilgileri
+# API Anahtarları ve E-posta Bilgileri 
+# (GitHub Actions'taki env isimleriyle birebir aynı yapıldı)
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-SENDER_EMAIL = os.getenv("EMAIL_USER")
-SENDER_PASSWORD = os.getenv("EMAIL_PASS")
-RECEIVER_EMAIL = os.getenv("EMAIL_RECEIVER")
+SENDER_EMAIL = os.getenv("SENDER_EMAIL")
+SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
+RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
 
 # OpenAI İstemcisi
 client_ai = OpenAI(api_key=OPENAI_API_KEY)
@@ -228,16 +227,10 @@ def main():
         else:
             print("E-posta gönderilemedi.")
     
-    print("Günün işlemi tamamlandı. Bot yarın saat 15:00'a kadar uyku modunda...")
-    # sys.exit(0) YAZAN SATIRI SİLİYORUZ, ÇÜNKÜ BOTUN KAPANMASINI İSTEMİYORUZ!
+    print("İşlem başarıyla tamamlandı. Bot kapanıyor...")
 
 if __name__ == "__main__":
-    print("🤖 Instagram Mail Botu Nöbete Başladı! Her gün 15:00'da çalışacak. Lütfen terminali kapatmayın.")
+    print("🤖 Instagram Mail Botu Tetiklendi! Görev başlatılıyor...")
     
-    # Her gün saat 15:00'da main fonksiyonunu çalıştır
-    schedule.every().day.at("15:00").do(main)
-    
-    # Sonsuz döngü: Bot arka planda saati kontrol eder
-    while True:
-        schedule.run_pending()
-        time.sleep(60) # Her 60 saniyede bir saati kontrol et
+    # GitHub Actions zaten zamanlamayı yaptığı için doğrudan main() fonksiyonunu çağırıyoruz
+    main()
